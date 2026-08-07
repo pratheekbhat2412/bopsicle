@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bopsicle Ecosystem | By Pratheek</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #ff006e;
+            --bg: #080808;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+
+        /* --- MASSIVE VISIBLE ROTATING VINYL --- */
+        .vinyl-bg {
+            position: fixed;
+            top: 50%;
+            left: 70%;
+            transform: translate(-50%, -50%);
+            width: 900px;
+            height: 900px;
+            z-index: -1;
+            opacity: 0.4; /* High visibility as requested */
+            pointer-events: none;
+        }
+
+        .vinyl-record {
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(
+                circle,
+                #000 0%,
+                #111 1%,
+                #0a0a0a 1.2%,
+                #111 2%
+            );
+            border-radius: 50%;
+            border: 15px solid #1a1a1a;
+            box-shadow: 0 0 100px rgba(255, 0, 110, 0.2);
+            animation: spin 10s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The label in the center of the spinning vinyl */
+        .vinyl-center {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #ff006e, #8338ec);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 10px solid rgba(0,0,0,0.3);
+        }
+
+        .vinyl-center span {
+            font-family: 'Space Grotesk';
+            font-weight: 800;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: white;
+            text-align: center;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- SCROLL REVEAL ANIMATIONS --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- INTERACTIVE CAT WIDGET --- */
+        #cat-station {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            text-align: center;
+        }
+
+        .cat-box {
+            font-size: 60px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            user-select: none;
+        }
+
+        .cat-box:hover { transform: scale(1.1); }
+
+        .food-item {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            font-size: 30px;
+            animation: bounce 0.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -10px); }
+        }
+
+        @keyframes gobble-shake {
+            0% { transform: scale(1.2) rotate(0); }
+            25% { transform: scale(1.2) rotate(10deg); }
+            75% { transform: scale(1.2) rotate(-10deg); }
+            100% { transform: scale(1.2) rotate(0); }
+        }
+
+        .eating { animation: gobble-shake 0.2s infinite !important; }
+
+        .cat-caption {
+            font-size: 11px;
+            color: #888;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 8px;
+            font-family: monospace;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- CONTENT STYLING --- */
+        .glass-card {
+            background: rgba(15, 15, 15, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover { border-color: var(--accent); }
+
+        .video-container {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .tools-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .tools-table th, .tools-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-align: left;
+        }
+
+        .tools-table th { color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+
+        .gradient-text {
+            background: linear-gradient(to right, #ff006e, #fb5607, #8338ec);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Spinning Background Vinyl -->
+    <div class="vinyl-bg">
+        <div class="vinyl-record">
+            <div class="vinyl-center">
+                <span>BOPSICLE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Cat -->
+    <div id="cat-station" onclick="handleFeed()">
+        <div id="bowl" class="food-item">🐟</div>
+        <div id="cat-emoji" class="cat-box">🐈‍⬛</div>
+        <div class="cat-caption">click here to feed my cat (name redacted)</div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="min-h-screen flex flex-col justify-center px-8 md:px-24">
+        <div class="max-w-4xl reveal">
+            <h1 class="text-7xl md:text-9xl font-extrabold heading-font tracking-tighter leading-none mb-6">
+                Bopsicle <br><span class="gradient-text">Ecosystem</span>
+            </h1>
+            <h2 class="text-2xl font-light tracking-widest text-gray-400 mb-8 uppercase">By Pratheek</h2>
+            
+            <p class="text-xl text-gray-300 leading-relaxed max-w-2xl">
+                Hi guys, I am Pratheek, a big-time music buff tryna build something here as a hobby. Welcome to Bopsicle Ecosystem! The idea of Bopsicle is to build all the music tools and spaces I need in one place. This also includes creating a personal space of my musical crib with my collections, experiences, and covers too. All of this was vibe-coding and using no-code platforms. Explore the stuff I’ve built till now below and let me know your thoughts. If you want to try something out, feel free to reach out to me or send an email to pratheekub2412@gmail.com!
+            </p>
+        </div>
+    </header>
+
+    <!-- Album Section -->
+    <section class="px-8 md:px-24 py-20 bg-black/40">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex justify-between items-end mb-12 border-b border-gray-800 pb-4 reveal">
+                <h3 class="text-4xl font-bold heading-font uppercase">Album: <span class="text-pink-600">Bopsicle</span></h3>
+                <span class="text-gray-500 font-mono tracking-widest">3 TRACKS</span>
+            </div>
+
+            <!-- Track List -->
+            <div class="space-y-6">
+                <!-- Track 1 -->
+                <a href="#p1" class="glass-card p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 block reveal">
+                    <div class="flex items-center gap-8">
+                        <span class="text-4xl font-bold text-gray-700 font-mono">01</span>
+                        <div>
+                            <h4 class="text-2xl font-bold">Bopsicle Playlist Maker</h4>
+                            <p class="text-gray-400">Tell Bops what you want and open your spotify; you’ll have your playlist ready</p>
+                        </div>
+                    </div>
+                    <div class="bg-white text-black w-14 h-14 rounded-full flex items-center justify-center font-black hover:bg-pink-600 hover:text-white transition-all">▶</div>
+                </a>
+
+                <!-- Track 2 -->
+                <a href="#p2" class="glass-card p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 block reveal">
+                    <div class="flex items-center gap-8">
+                        <span class="text-4xl font-bold text-gray-700 font-mono">02</span>
+                        <div>
+                            <h4 class="text-2xl font-bold">Pratheek’s Crib</h4>
+                            <p class="text-gray-400">A digital recreation of my music space, a personal app for me to log my vinyl collections, concerts attended and the covers I make with my keys</p>
+                        </div>
+                    </div>
+                    <div class="bg-white text-black w-14 h-14 rounded-full flex items-center justify-center font-black hover:bg-pink-600 hover:text-white transition-all">▶</div>
+                </a>
+
+                <!-- Track 3 -->
+                <a href="#p3" class="glass-card p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 block reveal">
+                    <div class="flex items-center gap-8">
+                        <span class="text-4xl font-bold text-gray-700 font-mono">03</span>
+                        <div>
+                            <h4 class="text-2xl font-bold">Bopsicle Looper</h4>
+                            <p class="text-gray-400">A very basic yet functional looping station, has 8 tabs to record individual audio tracks and overlay them to create a song</p>
+                        </div>
+                    </div>
+                    <div class="bg-white text-black w-14 h-14 rounded-full flex items-center justify-center font-black hover:bg-pink-600 hover:text-white transition-all">▶</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sub Pages Content -->
+    <main class="px-8 md:px-24 py-40 space-y-60">
+
+        <!-- Subpage 1 -->
+        <section id="p1" class="max-w-6xl mx-auto reveal">
+            <div class="grid lg:grid-cols-2 gap-16 items-start">
+                <div>
+                    <h2 class="text-5xl font-bold heading-font mb-6">Bopsicle Playlist Maker</h2>
+                    <p class="text-gray-400 text-lg mb-10">
+                        My very first project. This app is directly linked to my Spotify and Gemini from the backend. The prompt I give is processed by Gemini, which in turn automatically creates the playlist in my Spotify by itself within a minute.
+                    </p>
+                    <table class="tools-table bg-white/5 rounded-xl">
+                        <thead>
+                            <tr><th>Tools Used</th><th>Function</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Gemini</td><td>Reads the prompts, matches with listening data</td></tr>
+                            <tr><td>Flutterflow</td><td>Used to build the UI</td></tr>
+                            <tr><td>Make.com</td><td>Connects Gemini and Spotify automation</td></tr>
+                            <tr><td>Spotify Dev</td><td>Platform to connect Spotify directly</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="video-container shadow-2xl shadow-pink-500/10">
+                    <iframe src="https://drive.google.com/file/d/1PVTAl2OV9yhjJPiCrRVktCJ7toBfYp00/preview"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subpage 2 -->
+        <section id="p2" class="max-w-6xl mx-auto reveal">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="order-2 lg:order-1 video-container shadow-2xl shadow-purple-500/10">
+                    <iframe src="https://drive.google.com/file/d/1KBipUinGvpBporSqGTTzobq4W8MmTfim/preview"></iframe>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <h2 class="text-5xl font-bold heading-font mb-6">Pratheek’s Crib</h2>
+                    <p class="text-gray-400 text-lg mb-8">
+                        This is my personal digital space. Think of it like walking into my room and exploring the walls of music. This includes my Vinyl collection wall with a bit of history and personal significance, a concert wall where I log the concerts I’ve been to, and finally a cover section where I’ve added a few covers of mine, some done using the Bopsicle Looper
+                    </p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between border-b border-white/10 pb-2"><span class="text-pink-500">Claude/Gemini</span><span>Code</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2"><span class="text-pink-500">Flutterflow</span><span>UI</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2"><span class="text-pink-500">Google Sheets</span><span>Database (lol)</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subpage 3 -->
+        <section id="p3" class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="text-5xl font-bold heading-font mb-8">Bopsicle Looper</h2>
+            <div class="video-container mb-12 shadow-2xl">
+                <iframe src="https://drive.google.com/file/d/1w0M0P-pz6hRDdAcDtOJY6lZQwfZyqRIN/preview"></iframe>
+            </div>
+            <div class="text-left bg-white/5 p-10 rounded-3xl border border-white/10">
+                <p class="text-gray-400 text-lg mb-8">
+
+                    This was the toughest one out of the 3 for obvious reasons. I was messing around with FL, and my MIDI cable broke. My keyboard is pretty old, and I cannot find a cheap cable to connect it. I initially recorded individual sounds (for the full length of the song/cover) and stitched them together using a basic editor. That was very time-consuming. As the saying goes, necessity is the mother of invention; I created Bopsicle Looper.
+                </p>
+                <p class="text-gray-400 mb-8">
+                    All I have to do is press record, play my keys, it loops. I can adjust the volume and trim it too. I can record 8 such tracks and overlay them to create a final song.
+                </p>
+                <div class="flex gap-4">
+                    <span class="px-4 py-2 bg-pink-600 rounded-lg text-xs font-bold uppercase">Claude / Google AI Studio</span>
+                    <span class="px-4 py-2 bg-white/10 rounded-lg text-xs font-bold uppercase">Flutterflow</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-20 text-center text-gray-600 border-t border-white/5">
+        <p class="text-sm uppercase tracking-widest">Bopsicle Ecosystem © 2024</p>
+    </footer>
+
+    <script>
+        // Scroll Reveal logic
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(rev => observer.observe(rev));
+
+        // Cat Feeding logic
+        let isFeeding = false;
+        function handleFeed() {
+            if (isFeeding) return;
+            isFeeding = true;
+
+            const cat = document.getElementById('cat-emoji');
+            const bowl = document.getElementById('bowl');
+
+            // Wake up/Excited
+            cat.innerText = '🐈';
+            bowl.style.display = 'block';
+
+            // Gobbling
+            setTimeout(() => {
+                cat.classList.add('eating');
+                cat.innerText = '😸';
+            }, 600);
+
+            // Back to sleep
+            setTimeout(() => {
+                cat.classList.remove('eating');
+                cat.innerText = '🐈‍⬛';
+                bowl.style.display = 'none';
+                isFeeding = false;
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
